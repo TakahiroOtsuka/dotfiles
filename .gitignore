@@ -11,5 +11,4 @@
 *.sw[pon]
 tags
 Session.vim
-/dinoaur_bin
 /nytprof*
