@@ -1,0 +1,15 @@
+*.o
+*.lo
+*.la
+#*#
+.*.rej
+*.rej
+.*~
+*~
+.#*
+.DS_Store
+*.sw[pon]
+tags
+Session.vim
+/dinoaur_bin
+/nytprof*
