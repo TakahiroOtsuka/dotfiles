@@ -37,6 +37,10 @@ if dein#load_state(expand('~/.vim/dein'))
   call dein#add('Shougo/dein.vim')
   call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('Shougo/neocomplete.vim')
+  call dein#add('vim-scripts/L9')
+  call dein#add('vim-scripts/FuzzyFinder')
+  call dein#add('tpope/vim-surround')
+  call dein#add('junegunn/vim-easy-align')
 
   call dein#add('tpope/vim-fugitive')
   call dein#add('plasticboy/vim-markdown')
@@ -347,3 +351,12 @@ augroup END
 " -------------------------------
 au BufRead,BufNewFile *.md set filetype=markdown
 let g:previm_open_cmd = 'open -a "Google Chrome"'
+
+" vim-easy-align
+" -------------------------------
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
