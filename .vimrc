@@ -38,7 +38,7 @@ if dein#load_state(expand('~/.vim/dein'))
   call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('Shougo/neocomplete.vim')
   call dein#add('vim-scripts/L9')
-  call dein#add('vim-scripts/FuzzyFinder')
+  call dein#add('ctrlpvim/ctrlp.vim')
   call dein#add('tpope/vim-surround')
   call dein#add('junegunn/vim-easy-align')
 
@@ -101,6 +101,7 @@ let autocommands_loaded = 1
 autocmd BufNewFile,BufRead *.cs set syntax=csharp
 " setup folding
 autocmd BufNewFile,BufRead *.cs set foldmethod=syntax
+autocmd BufNewFile,BufRead *.md set foldmethod=syntax
 endif
 
 autocmd BufNewFile,BufRead *.tt set filetype=tt2html
@@ -199,8 +200,10 @@ map j gj
 map k gk
 "nnoremap <tab> gt
 "nnoremap <s-tab> gT
-"map <c-g>n gt
-"map <c-g>p gT
+map <c-g>n gt
+map <c-g>p gT
+map <c-g><c-n> gt
+map <c-g><c-p> gT
 
 imap {} {}<Left>
 imap [] []<Left>
@@ -224,32 +227,6 @@ inoremap <silent> jj <ESC>
 
 
 "setlocal omnifunc=syntaxcomplete#Complete
-
-"" pulugin fuf
-"" -------------------------------
-let g:fuf_modesDisable = []
-let g:fuf_file_exclude = '\v\~$|\.(o|exe|bak|swp|gif|jpg|png|meta)$|(^|[/\\])\.(hg|git|bzr)($|[/\\])|(^|/)blib/|^tmp/'
-let g:fuf_mrufile_exclude = '\v\~$|\.bak$|\.swp|\.howm$|\.(gif|jpg|png)$|(^|/)blib/'
-let g:fuf_mrufile_maxItem = 10000
-let g:fuf_enumeratingLimit = 40
-let g:fuf_keyPreview = '<C-]>'
-let g:fuf_previewHeight = 0
-
-"nnoremap <silent> <C-n>      :FufBuffer<CR>
-nnoremap <silent> <C-f><C-f>  :FufFile **/<CR>
-nnoremap <silent> <C-f><C-i>  :FufFileWithCurrentBufferDir<CR>
-"nnoremap <silent> <C-i>      :FufFile <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-nnoremap <silent> <C-f><C-j>  :FufMruFile<CR>
-nnoremap <silent> <C-f><C-k>  :FufMruCmd<CR>
-"nnoremap <silent> <C-p>      :FuzzyFinderDir <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
-"nnoremap <silent> <C-f><C-d> :FuzzyFinderDir<CR>
-"nnoremap <silent> <C-f><C-f> :FuzzyFinderFavFile<CR>
-"nnoremap <silent> <C-f><C-t> :FuzzyFinderTag!<CR>
-"nnoremap <silent> <C-f><C-g> :FuzzyFinderTaggedFile<CR>
-"noremap  <silent> g]         :FuzzyFinderTag! <C-r>=expand('<cword>')<CR><CR>
-"nnoremap <silent> <C-f>F     :FuzzyFinderAddFavFile<CR>
-"nnoremap <silent> <C-f><C-e> :FuzzyFinderEditInfo<CR>
-nnoremap <silent> <C-f><C-l>  :FufRenewCache<CR>
 
 " pulugin neocomplecache
 " -------------------------------
