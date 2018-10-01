@@ -38,7 +38,8 @@ if dein#load_state(expand('~/.vim/dein'))
   call dein#add('Shougo/vimproc.vim', {'build': 'make'})
   call dein#add('Shougo/neocomplete.vim')
   call dein#add('vim-scripts/L9')
-  call dein#add('ctrlpvim/ctrlp.vim')
+  call dein#add('Shougo/denite.nvim')
+  call dein#add('Shougo/neomru.vim')
   call dein#add('tpope/vim-surround')
   call dein#add('junegunn/vim-easy-align')
 
@@ -49,16 +50,14 @@ if dein#load_state(expand('~/.vim/dein'))
   call dein#add('w0ng/vim-hybrid')
   call dein#add('jonathanfilip/vim-lucius')
 
+  call dein#add('tpope/vim-obsession')
+
   call dein#end()
   call dein#save_state()
 endif
 
 filetype plugin indent on
 syntax enable
-
-
-"autocmd FileType tt2html :set tabstop=2
-"autocmd FileType tt2html :set shiftwidth=2
 
 let g:Align_xstrlen = 3
 
@@ -73,6 +72,12 @@ augroup highlightTab
   autocmd!
   autocmd Colorscheme * highlight Tab ctermfg=lightgray ctermbg=darkgray
   autocmd VimEnter,WinEnter * match Tab /\t/
+augroup END
+
+augroup highlightSuccessfull
+  autocmd!
+  autocmd Colorscheme * highlight Successfull ctermfg=red ctermbg=yellow
+  autocmd VimEnter,WinEnter * match Successfull /successfull/
 augroup END
 
 augroup highlightWhitespaceEOL
@@ -95,6 +100,7 @@ autocmd FileType perl :set dictionary=/usr/share/vim/vim74/syntax/perl.vim
 autocmd FileType perl :compiler perl
 "let perl_fold=1
 "set foldlevel=1
+let php_folding=1
 
 if !exists("autocommands_loaded")
 let autocommands_loaded = 1
@@ -118,6 +124,35 @@ if (v:version == 704 && has("patch338")) || v:version >= 705
     set breakat=\ 
     autocmd MyAutoGroup BufEnter * set breakindentopt=min:20,shift:0
 endif
+
+" denite
+" -------------------------------
+nnoremap <silent> <C-f><C-f> :<C-u>Denite file_rec<CR>
+nnoremap <silent> <C-f><C-i> :<C-u>Denite -input=<C-r>=expand('%:h')<CR> file_rec<CR>
+nnoremap <silent> <C-f><C-m> :<C-u>Denite file_mru<CR>
+nnoremap <silent> <C-f><C-g> :<C-u>Denite grep -buffer-name=search-buffer-denite<CR>
+nnoremap <silent> <C-f><C-r> :<C-u>Denite -resume -buffer-name=search-buffer-denite<CR>
+nnoremap <silent> <C-f><C-n> :<C-u>Denite -resume -buffer-name=search-buffer-denite -select=+1 -immediately<CR>
+nnoremap <silent> <C-f><C-p> :<C-u>Denite -resume -buffer-name=search-buffer-denite -select=-1 -immediately<CR>
+"C-N,C-Pで上下移動
+call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
+call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
+"C-J,C-Kでsplitで開く
+call denite#custom#map('insert', '<C-j>', '<denite:do_action:split>', 'noremap')
+call denite#custom#map('insert', '<C-k>', '<denite:do_action:vsplit>', 'noremap')
+if executable('rg')
+    call denite#custom#var('file_rec', 'command', ['rg', '--files', '--glob', '!.git'])
+    call denite#custom#var('grep', 'command', ['rg'])
+endif
+
+" customize ignore globs
+call denite#custom#source('file_rec', 'matchers', ['matcher_fuzzy','matcher_ignore_globs'])
+call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
+      \ [
+      \ '.git/', 'build/', '__pycache__/',
+      \ 'images/', '*.o', '*.make',
+      \ '*.min.*',
+      \ 'img/', 'fonts/', 'node_modules/'])
 
 " statusline
 " -------------------------------
@@ -196,21 +231,21 @@ endif
 
 " key bind
 " -------------------------------
-map j gj
-map k gk
+nnoremap j gj
+nnoremap k gk
 "nnoremap <tab> gt
 "nnoremap <s-tab> gT
-map <c-g>n gt
-map <c-g>p gT
-map <c-g><c-n> gt
-map <c-g><c-p> gT
+nnoremap <c-g>n gt
+nnoremap <c-g>p gT
+nnoremap <c-g><c-n> gt
+nnoremap <c-g><c-p> gT
 
-imap {} {}<Left>
-imap [] []<Left>
-imap () ()<Left>
-imap "" ""<Left>
-imap '' ''<Left>
-imap <> <><Left>
+inoremap {} {}<Left>
+inoremap [] []<Left>
+inoremap () ()<Left>
+inoremap "" ""<Left>
+inoremap '' ''<Left>
+inoremap <> <><Left>
 
 "nnoremap <CR> o<ESC>
 
@@ -218,10 +253,10 @@ imap <> <><Left>
 nnoremap <C-r><C-a> :Ref alc <c-r>=expand('<cword>')<CR><CR>
 nnoremap <C-r><C-p> :Ref perldoc <c-r>=expand('<cword>')<CR><CR>
 
-nmap n nzz
-nmap N Nzz
-nmap * *zz
-nmap # #zz
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
 
 inoremap <silent> jj <ESC>
 
@@ -244,7 +279,7 @@ let g:neocomplete#manual_completion_start_length = 2
 let g:neocomplete#min_keyword_length = 3
 
 let g:neocomplete#enable_ignore_case = 0
-let g:neocomplete#lock_buffer_name_pattern = '\[fuf\]'
+"let g:neocomplete#lock_buffer_name_pattern = '\[fuf\]'
 
 " Define dictionary.
 let g:neocomplete#sources#dictionary#dictionaries = {
@@ -265,10 +300,10 @@ if !exists('g:neocomplete#keyword_patterns')
 endif
 let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
-if !exists('g:neocomplete#force_omni_input_patterns')
-  let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.cs = '[^.]\.\%(\u\{2,}\)\?'
+"if !exists('g:neocomplete#force_omni_input_patterns')
+"  let g:neocomplete#force_omni_input_patterns = {}
+"endif
+"let g:neocomplete#force_omni_input_patterns.cs = '[^.]\.\%(\u\{2,}\)\?'
 
 " }}}
 
@@ -294,35 +329,35 @@ iabbrev ss my $self = shift;<Left><C-R>=Eatchar('\s')<CR>
 set cursorline
 highlight CursorLine term=underline cterm=underline
 highlight CursorLine term=none cterm=none ctermfg=none ctermbg=88
-augroup vimrc-auto-cursorline
-  autocmd!
-  autocmd CursorMoved,CursorMovedI * call s:auto_cursorline('CursorMoved')
-  autocmd CursorHold,CursorHoldI * call s:auto_cursorline('CursorHold')
-  autocmd WinEnter * call s:auto_cursorline('WinEnter')
-  autocmd WinLeave * call s:auto_cursorline('WinLeave')
-
-  let s:cursorline_lock = 0
-  function! s:auto_cursorline(event)
-    if a:event ==# 'WinEnter'
-      setlocal cursorline
-      let s:cursorline_lock = 2
-    elseif a:event ==# 'WinLeave'
-      setlocal nocursorline
-    elseif a:event ==# 'CursorMoved'
-      if s:cursorline_lock
-        if 1 < s:cursorline_lock
-          let s:cursorline_lock = 1
-        else
-          setlocal nocursorline
-          let s:cursorline_lock = 0
-        endif
-      endif
-    elseif a:event ==# 'CursorHold'
-      setlocal cursorline
-      let s:cursorline_lock = 1
-    endif
-  endfunction
-augroup END
+"augroup vimrc-auto-cursorline
+"  autocmd!
+"  autocmd CursorMoved,CursorMovedI * call s:auto_cursorline('CursorMoved')
+"  autocmd CursorHold,CursorHoldI * call s:auto_cursorline('CursorHold')
+"  autocmd WinEnter * call s:auto_cursorline('WinEnter')
+"  autocmd WinLeave * call s:auto_cursorline('WinLeave')
+"
+"  let s:cursorline_lock = 0
+"  function! s:auto_cursorline(event)
+"    if a:event ==# 'WinEnter'
+"      setlocal cursorline
+"      let s:cursorline_lock = 2
+"    elseif a:event ==# 'WinLeave'
+"      setlocal nocursorline
+"    elseif a:event ==# 'CursorMoved'
+"      if s:cursorline_lock
+"        if 1 < s:cursorline_lock
+"          let s:cursorline_lock = 1
+"        else
+"          setlocal nocursorline
+"          let s:cursorline_lock = 0
+"        endif
+"      endif
+"    elseif a:event ==# 'CursorHold'
+"      setlocal cursorline
+"      let s:cursorline_lock = 1
+"    endif
+"  endfunction
+"augroup END
 
 " markdown preview
 " -------------------------------
@@ -336,4 +371,3 @@ xmap ga <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-
